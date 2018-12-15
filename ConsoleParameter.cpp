@@ -7,8 +7,10 @@ using namespace std;
 
 ConsoleParameter::ConsoleParameter() {
   islegal = true;
-  if (!ExtractCommand() != 0)
+  if (ExtractCommand() != 0) {
     islegal = false;
+    return;
+  }
   if (ExtractOperationCode() != 0)
     islegal = false;
 }
@@ -39,7 +41,7 @@ string ConsoleParameter::GetOperationcode_s() {
 //get -c/-s from console
 //
 int ConsoleParameter::ExtractCommand() {
-  if (*(*(__argv + 1)) == '-' && *(*(__argv + 1) + 2) == '\0' &&
+  if ( *(*(__argv + 1)) == '-' && *(*(__argv + 1) + 2) == '\0' &&
     (*(*(__argv + 1) + 1) == 'c' || *(*(__argv + 1) + 1) == 's'))  {
     command = *(*(__argv + 1) + 1);
     return 0;
@@ -86,6 +88,7 @@ int ConsoleParameter::ExtractOperationCode() {
     operationcode_s = s_tmp;
     return 0;
   }
+  return -1;
 }
 
 //
