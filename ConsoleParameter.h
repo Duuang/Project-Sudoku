@@ -1,20 +1,27 @@
 #pragma once
 #include <string>
+using namespace std;
 
 class ConsoleParameter {
 public:
-  //ConsoleParameter(const int argc, const char *(*argv));
-
-  //
-  //int GetString();
+  ConsoleParameter();
   // get the -c / -s command
-  int GetCommand();
-  // get the operation code
-  int GetOperationCode();
-private:
-  //std::string input_string;
-  
+  char GetCommand();
+  // get Operationcode_c after command c
+  int GetOperationcode_c();
+  // get Operationcode_s after command s
+  string GetOperationcode_s();
+
+private:  
+  // extract the -c / -s command
+  int ExtractCommand();
+  // extract number after command c/s, according to char command
+  int ExtractOperationCode();
+  // output error string to console
+  void OutputError(string errorstring);
+
   char command;
-  int operation_code;
-  void OutputError();
+  int operationcode_c;
+  string operationcode_s;
+  bool islegal;
 };
