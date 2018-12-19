@@ -4,9 +4,15 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-  ConsoleParameter parameter;
+  /*ConsoleParameter parameter;
   SudokuPuzzle puzzle_generate(parameter);
-  puzzle_generate.Generate();
+  puzzle_generate.Generate();*/
+ // ConsoleParameter a(3, &&"aaa");
+  ConsoleParameter a;
+  char s[5] = "aaa";
+  char *p = s;
+  char ** aaa = &p;
+  a.Init(1, aaa);
 
   
   system("pause");

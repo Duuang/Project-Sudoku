@@ -4,7 +4,8 @@ using namespace std;
 
 class ConsoleParameter {
 public:
-  ConsoleParameter();
+  //init data members, and alter them according to argc and argv
+  void Init(int argc, char *argv[]);
   // get the -c / -s command
   char GetCommand();
   // get Operationcode_c after command c
@@ -20,6 +21,8 @@ private:
   // output error string to console
   void OutputError(string errorstring);
 
+  int argc;
+  char **argv;
   char command;
   int operationcode_c;
   string operationcode_s;

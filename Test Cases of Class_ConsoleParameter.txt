@@ -1,0 +1,26 @@
+// Test cases in "TEST_METHOD(Class_ConsoleParameter)",  in project "UnitTestForConsolePatameter"
+Testcase testcase[CASE_AMOUNT] = {
+        {1, {"exename" }, '\0', -1, "\0"},
+        {2, {"exename", "-c"}, '\0', -1, "\0"},
+        {2, {"exename", "aaaaaaaaaaaaaaaaa"}, '\0', -1, "\0"},
+        {3, {"exename", "-c", "100"}, 'c', 100, "\0"},
+        {3, {"exename", "-s", "mypath"}, 's', -1, "mypath"},
+
+        {3, {"exename", "-c", "-1"}, '\0', -1, "\0"},
+        {3, {"exename", "-c", "0"}, '\0', -1, "\0"},
+        {3, {"exename", "-c", "1"}, 'c', 1, "\0"},
+        {3, {"exename", "-c", "2"}, 'c', 2, "\0"},
+        {3, {"exename", "-c", "999999"}, 'c', 999999, "\0"},
+        {3, {"exename", "-c", "1000000"}, 'c', 1000000, "\0"},
+        {3, {"exename", "-c", "1000001"}, '\0', -1, "\0"},
+        {3, {"exename", "-c", "ccccc"}, '\0', -1, "\0"},
+        {3, {"exename", "-c", "123a"}, '\0', -1, "\0"},
+        {3, {"exename", "-c", "&&&&"}, '\0', -1, "\0"},
+        {3, {"exename", "-s", "&&my&&path"}, 's', -1, "&&my&&path"},
+        {3, {"exename", "-s", "12345"}, 's', -1, "12345"},
+
+        {3, {"exename", "123", "12345"}, '\0', -1, "\0"},
+        {3, {"exename", "-ccc", "12345"}, '\0', -1, "\0"},
+        {3, {"exename", "-sss", "12345"}, '\0', -1, "\0"},
+        {4, {"exename", "-ccc", "12345", "12345"}, '\0', -1, "\0"},
+      };
