@@ -10,7 +10,12 @@ public:
   SudokuPuzzle(ConsoleParameter parameter);
   //用于关闭两个文件
   ~SudokuPuzzle();
-  //调用dfs_solve()，解文件中的所有数独题，并输出到sudoku_answers文件
+  //从文件中读取下一个数独题，成功返回0，失败-1
+  int GetNextPuzzle();
+  //调用dfs_solve()，解当前puzzle中存放的数独
+  int SolveCurrentPuzzle();
+  //反复调用GetNextPuzzle();、SolveCurrentPuzzle();
+  //解文件中的所有数独题，并输出到sudoku_answers文件
   int SolveAll();
 private:
   //用于根据puzzle[10][10]解一个数独，把解存至solution[90]
