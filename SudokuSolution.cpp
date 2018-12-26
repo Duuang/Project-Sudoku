@@ -46,6 +46,9 @@ void SudokuSolution::Generate() {  // TODO: 多线程和缓冲区？
   int n1, n2, n3, n4, n5, n6, n7, n8, n9;
   int sequence[10];
   char outputstring[1005] = "";
+  //优化版本1： 用指针操作，代替strcat，因为strcat每次都是从字符串开始处往后，浪费时间
+  char *currentpos;
+
   for (int i = 0; i < 25; i++) {
     n1 = TOP_LEFT_CORNER_NUMBER;
     int puzzle[10][10];            
@@ -67,7 +70,8 @@ void SudokuSolution::Generate() {  // TODO: 多线程和缓冲区？
                     continue;
                   }
                   n9 = 45 - (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8);
-                  
+                  currentpos = outputstring;
+
                   sequence[1] = n1;   sequence[2] = n2;   sequence[3] = n3;  // store in sequence
                   sequence[4] = n4;   sequence[5] = n5;   sequence[6] = n6;
                   sequence[7] = n7;   sequence[8] = n8;   sequence[9] = n9;
@@ -77,33 +81,44 @@ void SudokuSolution::Generate() {  // TODO: 多线程和缓冲区？
                       puzzle[row][column] = sequence[basic_value];
                     }
                   }
-                  outputstring[0] = '\0';  // init outputstring as empty string
-                  memset(outputstring, '\0', sizeof(outputstring));
-                  if (count != 0)          // empty line before puzzle
-                    strcat_s(outputstring, sizeof(outputstring) , "\n\n\0");
+                  //优化版本1：因为是缓冲区，不初始化也没事，把初始化注释掉了
+                  //outputstring[0] = '\0';  // init outputstring as empty string
+                  //memset(outputstring, '\0', sizeof(outputstring));
+                  if (count != 0) {      // empty line before puzzle
+                    //strcat_s(outputstring, sizeof(outputstring), "\n\n\0");
+                    *currentpos++ = '\n';
+                    *currentpos++ = '\n';
+                  }
                   for (int row = 1; row <= 9; row++) {
                     for (int column = 1; column <= 9; column++) {
                       if (column <= 8) {    // 前8列
-                        char tmpchar[3];
+                        /*char tmpchar[3];
                         tmpchar[0] = puzzle[row][column] + 48;
                         tmpchar[1] = ' ';
                         tmpchar[2] = '\0';
-                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);
+                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);*/
+                        *currentpos++ = puzzle[row][column] + 48;
+                        *currentpos++ = ' ';
+                        
                       } else if (row <= 8) {   //第9列前8行
-                        char tmpchar[3];
+                        /*char tmpchar[3];
                         tmpchar[0] = puzzle[row][column] + 48;
                         tmpchar[1] = '\n';
                         tmpchar[2] = '\0';
-                        strcat_s(outputstring, sizeof(outputstring), tmpchar);
+                        strcat_s(outputstring, sizeof(outputstring), tmpchar);*/
+                        *currentpos++ = puzzle[row][column] + 48;
+                        *currentpos++ = '\n';
                       } else {    //右下角的数
-                        char tmpchar[2];
+                        /*char tmpchar[2];
                         tmpchar[0] = puzzle[row][column] + 48;
                         tmpchar[1] = '\0';
-                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);
+                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);*/
+                        *currentpos++ = puzzle[row][column] + 48;
                       }
                     }
                   }
                   //将缓冲区中的整个数独的字符串写入文件
+                  *currentpos++ = '\0';
                   fwrite(outputstring, sizeof(char) * (strlen(outputstring)), 1, fp);
                   //==================================
                   //outfile << outputstring;
@@ -143,15 +158,17 @@ void SudokuSolution::Generate(int amount) {
   errno_t err;
   err = fopen_s(&fp, "sudoku.txt", "w+");
   int count = 0;
-  //============================================
-  int maxcount = amount;  // 重载时更改的 地方
-  //=============================================
+  //int amount = parameter.GetOperationcode_c();
+  int maxcount = amount;
   int n1, n2, n3, n4, n5, n6, n7, n8, n9;
   int sequence[10];
   char outputstring[1005] = "";
+  //优化版本1： 用指针操作，代替strcat，因为strcat每次都是从字符串开始处往后，浪费时间
+  char *currentpos;
+
   for (int i = 0; i < 25; i++) {
     n1 = TOP_LEFT_CORNER_NUMBER;
-    int puzzle[10][10];
+    int puzzle[10][10];            
     for (n2 = 1; n2 <= 9; n2++) {  // ugly...but quicker(?) than recursive function
       if (n2 == n1)  continue;     // probably there isn't much difference?
       for (n3 = 1; n3 <= 9; n3++) {// TODO: try recursive function
@@ -170,7 +187,8 @@ void SudokuSolution::Generate(int amount) {
                     continue;
                   }
                   n9 = 45 - (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8);
-                  
+                  currentpos = outputstring;
+
                   sequence[1] = n1;   sequence[2] = n2;   sequence[3] = n3;  // store in sequence
                   sequence[4] = n4;   sequence[5] = n5;   sequence[6] = n6;
                   sequence[7] = n7;   sequence[8] = n8;   sequence[9] = n9;
@@ -180,32 +198,44 @@ void SudokuSolution::Generate(int amount) {
                       puzzle[row][column] = sequence[basic_value];
                     }
                   }
-                  outputstring[0] = '\0';  // init outputstring as empty string
-                  memset(outputstring, '\0', sizeof(outputstring));
-                  if (count != 0)          // empty line before puzzle
-                    strcat_s(outputstring, sizeof(outputstring) , "\n\n\0");
+                  //优化版本1：因为是缓冲区，不初始化也没事，把初始化注释掉了
+                  //outputstring[0] = '\0';  // init outputstring as empty string
+                  //memset(outputstring, '\0', sizeof(outputstring));
+                  if (count != 0) {      // empty line before puzzle
+                    //strcat_s(outputstring, sizeof(outputstring), "\n\n\0");
+                    *currentpos++ = '\n';
+                    *currentpos++ = '\n';
+                  }
                   for (int row = 1; row <= 9; row++) {
                     for (int column = 1; column <= 9; column++) {
-                      if (column <= 8) {
-                        char tmpchar[3];
+                      if (column <= 8) {    // 前8列
+                        /*char tmpchar[3];
                         tmpchar[0] = puzzle[row][column] + 48;
                         tmpchar[1] = ' ';
                         tmpchar[2] = '\0';
-                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);
-                      } else if (row <= 8) {
-                        char tmpchar[3];
+                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);*/
+                        *currentpos++ = puzzle[row][column] + 48;
+                        *currentpos++ = ' ';
+                        
+                      } else if (row <= 8) {   //第9列前8行
+                        /*char tmpchar[3];
                         tmpchar[0] = puzzle[row][column] + 48;
                         tmpchar[1] = '\n';
                         tmpchar[2] = '\0';
-                        strcat_s(outputstring, sizeof(outputstring), tmpchar);
-                      } else {
-                        char tmpchar[2];
+                        strcat_s(outputstring, sizeof(outputstring), tmpchar);*/
+                        *currentpos++ = puzzle[row][column] + 48;
+                        *currentpos++ = '\n';
+                      } else {    //右下角的数
+                        /*char tmpchar[2];
                         tmpchar[0] = puzzle[row][column] + 48;
                         tmpchar[1] = '\0';
-                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);
+                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);*/
+                        *currentpos++ = puzzle[row][column] + 48;
                       }
                     }
                   }
+                  //将缓冲区中的整个数独的字符串写入文件
+                  *currentpos++ = '\0';
                   fwrite(outputstring, sizeof(char) * (strlen(outputstring)), 1, fp);
                   //==================================
                   //outfile << outputstring;

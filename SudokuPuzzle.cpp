@@ -18,7 +18,11 @@ SudokuPuzzle::SudokuPuzzle(ConsoleParameter parameter) {
   errno_t err;
   //err = fopen_s(&finput, "C:\\Users\\cky\\source\\repos\\Project9\\Project9\\problems.txt", "r");
   err = fopen_s(&finput, parameter.GetOperationcode_s().c_str(), "r");
+  //if (finput == NULL)
+    //printf("input file open failed\n");
   err = fopen_s(&foutput, "solution_of_puzzles.txt", "w");
+  //if (foutput == NULL)
+    //printf("output file open failed\n");
   count = 0;
 }
 
@@ -78,9 +82,9 @@ int SudokuPuzzle::SolveAll() {
   int solved_count = 0;
   while (true) {
     if (GetNextPuzzle() != 0)
-      return -1;
+      break;
     if (SolveCurrentPuzzle() != 0)
-      return -1;
+      break;
     solved_count++;
   }
   if (solved_count == 0)
