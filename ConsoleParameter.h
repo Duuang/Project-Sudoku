@@ -1,30 +1,29 @@
 #pragma once
 #include <string>
+
 using namespace std;
 
+//
+//用来获取控制台参数，并处理，判断错误，得到两个参数
+//之后可以用于生成数独或求解数独时的参数
+//
 class ConsoleParameter {
 public:
-  //init data members, and alter them according to argc and argv
-  void Init(int argc, char *argv[]);
-  // get the -c / -s command
+  // 根据argc和argv，初始化所有成员变量
+  ConsoleParameter(int argc, char *argv[]);
+  // 获取-c或者-s指令，失败返回'\0'
   char GetCommand();
-  // get Operationcode_c after command c
-  int GetOperationcode_c();
-  // get Operationcode_s after command s
-  string GetOperationcode_s();
-
-private:  
-  // extract the -c / -s command
-  int ExtractCommand();
-  // extract number after command c/s, according to char command
-  int ExtractOperationCode();
-  // output error string to console
+  // 获取-c或-s后面的参数，失败返回"\0"
+  string GetOperationcode();
+private:
+  // 向控制台显示错误信息
   void OutputError(string errorstring);
-
+  // argc，控制台参数个数
   int argc;
+  // argv，多个控制台参数数组的首地址
   char **argv;
+  //存放-c或者-s，或者空
   char command;
-  int operationcode_c;
-  string operationcode_s;
-  bool islegal;
+  //存放-c或者-s后面的参数
+  string operationcode;
 };

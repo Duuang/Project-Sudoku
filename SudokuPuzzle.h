@@ -1,16 +1,38 @@
 #pragma once
 #include "ConsoleParameter.h"
+
+//
+//接收ConsoleParameter对象，并求解文件中数独，输出到sudoku_answers文件
+//
 class SudokuPuzzle {
 public:
+  //用ConsoleParameter类的参数初始化对象（无默认构造函数），并初始化所有数据成员
   SudokuPuzzle(ConsoleParameter parameter);
-  void Generate();
+  //用于关闭两个文件
+  ~SudokuPuzzle();
+  //调用dfs_solve()，解文件中的所有数独题，并输出到sudoku_answers文件
+  int SolveAll();
 private:
-// generate 25 basic puzzle that the first row is 123456789,
-// so that can generate 25 * 8! = 1008000 puzzles later on
-  void GenerateBasicPuzzle();
-
+  //用于根据puzzle[10][10]解一个数独，把解存至solution[90]
+  void dfs_solve(int depth);
+  //用于构造对象
   ConsoleParameter parameter;
-  int basic_puzzle[25][10][10];
+  //存数独题，0代表空格，1~9行和1~9列为有效数据
+  int puzzle[10][10];
+  //数独题是否符合格式要求
+  bool islegal;
+  //数独题中的0个数
+  int number_of_blanks;
+  //数独题中每个0的位置，从0下标开始
+  int position_of_blanks[90][2];
+  //存数独的解，从0下标开始
+  int solution[90];
+  //数独是否有解
+  bool solvable;
+  //输入文件的指针
+  FILE *finput;
+  //输出文件的指针
+  FILE *foutput;
+  //表示读了几个题进来，纯粹是为了输出到文件的时候区分第一个
+  int count;
 };
-
-
