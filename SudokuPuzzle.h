@@ -10,13 +10,18 @@ public:
   SudokuPuzzle(ConsoleParameter parameter);
   //用于关闭两个文件
   ~SudokuPuzzle();
-  //从文件中读取下一个数独题，成功返回0，失败-1
+  //从文件中读取下一个数独题，成功返回0，失败-1，如果打开文件失败，返回-2
   int GetNextPuzzle();
   //调用dfs_solve()，解当前puzzle中存放的数独
+  //有解返回0，无解返回-1，如果打开文件失败，返回-2
   int SolveCurrentPuzzle();
   //反复调用GetNextPuzzle();、SolveCurrentPuzzle();
   //解文件中的所有数独题，并输出到sudoku_answers文件
+  //返回的数值为成功解的个数，和count成员变量一减，也能得到无解的数量，都无解的话返回0
+  //如果打开文件失败，返回-2
   int SolveAll();
+  //表示读了几个题进来，纯粹是为了输出到文件的时候区分第一个
+  int count;
 private:
   //用于根据puzzle[10][10]解一个数独，把解存至solution[90]
   void dfs_solve(int depth);
@@ -38,6 +43,4 @@ private:
   FILE *finput;
   //输出文件的指针
   FILE *foutput;
-  //表示读了几个题进来，纯粹是为了输出到文件的时候区分第一个
-  int count;
 };

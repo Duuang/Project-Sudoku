@@ -18,11 +18,11 @@ SudokuPuzzle::SudokuPuzzle(ConsoleParameter parameter) {
   errno_t err;
   //err = fopen_s(&finput, "C:\\Users\\cky\\source\\repos\\Project9\\Project9\\problems.txt", "r");
   err = fopen_s(&finput, parameter.GetOperationcode_s().c_str(), "r");
-  //if (finput == NULL)
-    //printf("input file open failed\n");
+  if (finput == NULL)
+    printf("打开数独题的输入文件失败\n");
   err = fopen_s(&foutput, "solution_of_puzzles.txt", "w");
-  //if (foutput == NULL)
-    //printf("output file open failed\n");
+  if (foutput == NULL)
+    printf("打开数独解的输出文件失败\n");
   count = 0;
 }
 
@@ -40,6 +40,8 @@ SudokuPuzzle::~SudokuPuzzle() {
 //从文件中读取下一个数独题，成功返回0，失败-1
 //
 int SudokuPuzzle::GetNextPuzzle() {
+  if (finput == NULL || foutput == NULL)  //如果打开文件失败，则无法继续
+    return -2;
   char tmpchar;  //按字符读取文件，存到tmpchar
   int count_charsgot = 0;  //记录已读取的0~9的字符数
   number_of_blanks = 0;  //记录为'0'的数目，初始化
@@ -79,16 +81,17 @@ int SudokuPuzzle::GetNextPuzzle() {
 //解文件中的所有数独题，并输出到sudoku_answers文件
 //
 int SudokuPuzzle::SolveAll() {
+  if (finput == NULL || foutput == NULL)  //如果打开文件失败，则无法继续
+    return -2;
   int solved_count = 0;
   while (true) {
     if (GetNextPuzzle() != 0)
       break;
-    if (SolveCurrentPuzzle() != 0)
-      break;
-    solved_count++;
+    if (SolveCurrentPuzzle() != 0) {
+      continue;   //无解的情况
+    }
+    solved_count++;  //有解，已解的数目加1
   }
-  if (solved_count == 0)
-    return -1;
   return solved_count;
 }
 
@@ -96,9 +99,37 @@ int SudokuPuzzle::SolveAll() {
 //调用dfs_solve()，解当前puzzle中存放的数独
 //
 int SudokuPuzzle::SolveCurrentPuzzle() {
+  if (finput == NULL || foutput == NULL)  //如果打开文件失败，则无法继续
+    return -2;
   if (!islegal) {
     return -1;
   } else {
+    //在解数独前，还要先判断，已经给的数独题中有没有本来就冲突的地方
+    //如果有的话，那不用解了，直接输出无解即可
+    for (int row = 1; row <= 9; row++) {
+      for (int column = 1; column <= 9; column++) {
+        if (puzzle[row][column] == 0)
+          continue;
+        for (int i = 1; i <= 9; i++) {  //判断是否和行或列重复
+          if ((i != row && puzzle[i][column] == puzzle[row][column])
+            || (i != column && puzzle[row][i] == puzzle[row][column])) {  //重复了
+            solvable = false;
+            return -1;
+          }
+        }
+        for (int k1 = 0; k1 < 3; k1++)
+          for (int k2 = 0; k2 < 3; k2++) {  //判断是否和9宫格中的重复
+            int baserow = (row - 1) / 3 * 3 + 1;
+            int basecolumn = (column - 1) / 3 * 3 + 1;
+            if (puzzle[baserow + k1][basecolumn + k2] == puzzle[row][column]
+              && (baserow + k1 != row && basecolumn + k2 != column)) {
+              solvable = false;
+              return -1;
+            }
+          }
+      }
+    }
+    //现在数独一定有解了。。
     dfs_solve(1);
     if (solvable) {  //直接将puzzle中的0替换为solution数组中的解，然后输出到文件即可（其实和生成数独的输出部分一样）
       char outputstring[1005] = { '\0' };  //缓冲区
