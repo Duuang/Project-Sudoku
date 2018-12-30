@@ -20,7 +20,7 @@ void ConsoleParameter::Init(int argc, char *argv[]) {
   operationcode_c = -1;
   string emptystring = "\0";
   operationcode_s = emptystring;
-  if (argc != 3) {  // 如果argc不对，直接设置成非法参数，返回-1
+  if (argc != 3) {  // 如果argc不对，islegal参数直接设置成非法，返回-1
     islegal = false;
     return;
   }
@@ -72,6 +72,7 @@ int ConsoleParameter::ExtractCommand() {
     return -1;
   }
 }
+
 //
 // 根据command为'c'还是's'，获取后面的参数，成功返回0，失败-1
 //
@@ -82,19 +83,19 @@ int ConsoleParameter::ExtractOperationCode() {
   }
   // -c 1-1000000
   if (command == 'c') {
-    if (strlen(*(argv + 2)) > 8) {  // strlen limit = 8
+    if (strlen(*(argv + 2)) > 8) {  // 字符串长度限制为8，超出的话非法
       OutputError("1-1000000\n");
       return -1;
 
     } else {
-      for (int i = 0; i < (int)strlen(*(argv + 2)); i++) {  // check if all characters in '0'-'9'
+      for (int i = 0; i < (int)strlen(*(argv + 2)); i++) {  // 检查是否所有字符都是0~9
         if (*(*(argv + 2) + i) < '0' || *(*(argv + 2) + i) > '9') {
           OutputError("1-1000000\n");
           return -1;
         }
       }
       sscanf_s(*(argv + 2), "%d", &operationcode_c);
-      if (operationcode_c >= 1 && operationcode_c <= 1000000) {
+      if (operationcode_c >= 1 && operationcode_c <= 1000000) {  //检查是否在1——1000000范围内
         return 0;
       } else {
         OutputError("1-1000000\n");
@@ -102,7 +103,7 @@ int ConsoleParameter::ExtractOperationCode() {
       }
     }
   }
-  // -s, string filepath
+  // -s, string filepath，存文件路径到string
   if (command == 's') {
     char s_tmp[1005] = "";
     sscanf_s(*(argv + 2), "%s", s_tmp, (unsigned int)(1005 * sizeof(char)));

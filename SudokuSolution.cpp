@@ -39,17 +39,17 @@ void SudokuSolution::Generate() {  // TODO: 多线程和缓冲区？
   //==================================
   FILE *fp;
   errno_t err;
-  err = fopen_s(&fp, "sudoku.txt", "w+");
-  int count = 0;
+  err = fopen_s(&fp, "sudoku.txt", "w+");  //打开文件，不用err的话代码分析会warning
+  int count = 0;  //生成的个数
   int amount = parameter.GetOperationcode_c();
   int maxcount = amount;
-  int n1, n2, n3, n4, n5, n6, n7, n8, n9;
-  int sequence[10];
-  char outputstring[1005] = "";
+  int n1, n2, n3, n4, n5, n6, n7, n8, n9;  //代表1~9的序列，在基础数独上，应用这个序列，即可生成一个数独
+  int sequence[10];  //存储1~9序列
+  char outputstring[1005] = "";  //文件缓冲区（不需要初始化）
   //优化版本1： 用指针操作，代替strcat，因为strcat每次都是从字符串开始处往后，浪费时间
   char *currentpos;
 
-  for (int i = 0; i < 25; i++) {
+  for (int i = 0; i < 25; i++) {  
     n1 = TOP_LEFT_CORNER_NUMBER;
     int puzzle[10][10];            
     for (n2 = 1; n2 <= 9; n2++) {  // ugly...but quicker(?) than recursive function
@@ -69,13 +69,13 @@ void SudokuSolution::Generate() {  // TODO: 多线程和缓冲区？
                     || n8 == n6 || n8 == n7) {
                     continue;
                   }
-                  n9 = 45 - (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8);
-                  currentpos = outputstring;
+                  n9 = 45 - (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8);  //此时已经生成了以2开头的序列
+                  currentpos = outputstring;  //指针，记录缓冲区的当前的位置
 
                   sequence[1] = n1;   sequence[2] = n2;   sequence[3] = n3;  // store in sequence
                   sequence[4] = n4;   sequence[5] = n5;   sequence[6] = n6;
                   sequence[7] = n7;   sequence[8] = n8;   sequence[9] = n9;
-                  for (int row = 1; row <= 9; row++) {  //substitute with numbers in sequence[]
+                  for (int row = 1; row <= 9; row++) {  //substitute with numbers in sequence[]，将数独根据序列替换
                     for (int column = 1; column <= 9; column++) {
                       int basic_value = basic_puzzle[i][row][column];
                       puzzle[row][column] = sequence[basic_value];
@@ -84,6 +84,8 @@ void SudokuSolution::Generate() {  // TODO: 多线程和缓冲区？
                   //优化版本1：因为是缓冲区，不初始化也没事，把初始化注释掉了
                   //outputstring[0] = '\0';  // init outputstring as empty string
                   //memset(outputstring, '\0', sizeof(outputstring));
+				  //---------------------------------------------------------------------
+				  //开始向缓冲区写要输入到文件的数独数据
                   if (count != 0) {      // empty line before puzzle
                     //strcat_s(outputstring, sizeof(outputstring), "\n\n\0");
                     *currentpos++ = '\n';
@@ -275,20 +277,21 @@ void SudokuSolution::GenerateBasicPuzzle() {
     {-1, 3, 1, 2, 6, 4, 5, 9, 7, 8},
     {-1, 6, 4, 5, 9, 7, 8, 3, 1, 2},
     {-1, 9, 7, 8, 3, 1, 2, 6, 4, 5} } };*/
+  //用来保存456、789的排列组合顺序
   int sequence456[6][3] = { {4, 5, 6}, {4, 6, 5}, {5, 4, 6}, {5, 6, 4}, {6, 4, 5} };
   int sequence789[6][3] = { {7, 8, 9}, {7, 9, 8}, {8, 7, 9}, {8, 9, 7}, {9, 7, 8} };
   int sequence123[3] = { 1, 2, 3 };
-  for (int i = 0; i < 5; i++) { // i: choose in sequence456
-    for (int j = 0; j < 5; j++) {  //j: choose in sequence 567
+  for (int i = 0; i < 5; i++) { // i: choose in sequence456，在456的排列顺序中选一个
+    for (int j = 0; j < 5; j++) {  //j: choose in sequence 567，在789的排列顺序中选一个
       int count = i * 5 + j;
-      for (int k = 1; k <= 9; k++)  // fill first row with 123456789
+      for (int k = 1; k <= 9; k++)  // fill first row with 123456789，将第一行填为123456789
         basic_puzzle[count][1][k] = k;
-      for (int k = 0; k < 3; k++) { // loop for sequence, fill 2~3rd rows
+      for (int k = 0; k < 3; k++) { // loop for sequence, fill 2~3rd rows，按照选的序列，填2—3行
         basic_puzzle[count][2][1 + k] = basic_puzzle[count][3][7 + k] = sequence456[i][k];
         basic_puzzle[count][3][1 + k] = basic_puzzle[count][2][4 + k] = sequence789[j][k];
         basic_puzzle[count][3][4 + k] = basic_puzzle[count][2][7 + k] = sequence123[k];
       }
-      for (int row = 4; row <= 6; row++) {  // fill 4~6 rows, right shift 1
+      for (int row = 4; row <= 6; row++) {  // fill 4~6 rows, right shift 1，填4~6行，即为前3行右移1
         for (int column = 1; column <= 9; column++) {
           if (column % 3 != 0) {
             basic_puzzle[count][row][column] = basic_puzzle[count][row - 3][column + 1];
@@ -297,7 +300,7 @@ void SudokuSolution::GenerateBasicPuzzle() {
           }
         }
       }
-      for (int row = 7; row <= 9; row++) {  // fill 7~9 rows, right shift 1
+      for (int row = 7; row <= 9; row++) {  // fill 7~9 rows, right shift 1 ，填7~9行，即为前3行右移1
         for (int column = 1; column <= 9; column++) {
           if (column % 3 != 0) {
             basic_puzzle[count][row][column] = basic_puzzle[count][row - 3][column + 1];

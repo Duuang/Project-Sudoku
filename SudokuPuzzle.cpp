@@ -130,8 +130,10 @@ int SudokuPuzzle::SolveCurrentPuzzle() {
       }
     }
     //现在数独一定有解了。。
+	//调用dfs，解数独
     dfs_solve(1);
-    if (solvable) {  //直接将puzzle中的0替换为solution数组中的解，然后输出到文件即可（其实和生成数独的输出部分一样）
+	//直接将puzzle中的0替换为solution数组中的解，然后输出到文件即可（其实和生成数独的输出部分一样）
+    if (solvable) {  
       char outputstring[1005] = { '\0' };  //缓冲区
       if (count >= 2)
         strcat_s(outputstring, sizeof(outputstring), "\n\n\0");  //若不是第一个，则先输出空行
@@ -212,7 +214,7 @@ void SudokuPuzzle::dfs_solve(int depth) {
           int basecolumn = (position_of_blanks[depth - 1][1] - 1) / 3 * 3 + 1;
           if (puzzle[baserow + k1][basecolumn + k2] == i && baserow + k1 != position_of_blanks[depth - 1][0] 
             && basecolumn + k2 != position_of_blanks[depth - 1][1])
-            goto continue_next_branch;  //do nothing and stop searching this branch
+            goto continue_next_branch;  //do nothing and stop searching this branch，跳转到循环结束处
         }
       solution[depth - 1] = i;  //记录当前节点解
       puzzle[position_of_blanks[depth - 1][0]][position_of_blanks[depth - 1][1]] = i;
