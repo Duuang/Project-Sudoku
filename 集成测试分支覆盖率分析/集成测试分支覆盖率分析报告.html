@@ -1,0 +1,92 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8"/>
+        <title>sudoku-o.exe</title>
+        <link rel="stylesheet" type="text/css" href="third-party/css/style.css"/>
+        <script src="third-party/RGraph/libraries/RGraph.common.core.js" type="text/javascript"></script>
+        <script src="third-party/RGraph/libraries/RGraph.common.dynamic.js" type="text/javascript"></script>
+        <script src="third-party/RGraph/libraries/RGraph.common.tooltips.js" type="text/javascript"></script>
+        <script src="third-party/RGraph/libraries/RGraph.pie.js" type="text/javascript"></script>
+        <script src="third-party/JQuery/jquery-1.11.1.min.js"></script>
+    </head>
+    <body>
+    <script type="text/javascript">
+        $(document).ready(function ()
+        {
+            
+            new RGraph.Pie('pi_a9b7fb2a-c991-42df-9f4c-97f455aef9dd', [327, 90])
+                .set('labels', ['Cover 78%','Uncover 22%'])
+                .set('colors', ['rgb(0,255,0)','rgb(255,0,0)'])
+                .set('linewidth', 1)
+                .set('shadow', true)
+                .set('tooltips', ['cover 327 lines (78%)', 'uncover 90 lines (22%)'])
+                .set('tooltips.event', 'onmousemove')
+                .set('labels.sticks', true)
+                .set('labels.sticks.length', 10)
+                .draw();
+            
+            new RGraph.Pie('pi_bbb23da0-bc7d-4f10-acf3-b0d07db78177', [327, 90])
+                .set('labels', ['Cover 78%','Uncover 22%'])
+                .set('colors', ['rgb(0,255,0)','rgb(255,0,0)'])
+                .set('linewidth', 1)
+                .set('shadow', true)
+                .set('tooltips', ['cover 327 lines (78%)', 'uncover 90 lines (22%)'])
+                .set('tooltips.event', 'onmousemove')
+                .set('labels.sticks', true)
+                .set('labels.sticks.length', 10)
+                .draw();
+            
+
+      })
+    </script>    
+        <h1>
+        sudoku-o.exe
+        </h1>
+        <h4>
+        
+        </h4>
+        <table id="rounded-corner">
+            <thead>
+                <tr>
+                    <th scope="col" class="rounded-left">Coverage</th>
+                    <th scope="col">Total lines</th>
+                    <th scope="col" class="rounded-right">Items</th>
+                </tr>
+            </thead> 
+            <tbody>
+                
+                <tr>
+                    <td>
+            <canvas id="pi_a9b7fb2a-c991-42df-9f4c-97f455aef9dd" width="280" height="100">Cover 78%</canvas>
+                    </td>            
+                    <td>417</td>
+                    <td>            
+                      
+                      sudoku-o.exe
+                      
+                    </td>
+                </tr>        
+                
+                <tr>
+                    <td>
+            <canvas id="pi_bbb23da0-bc7d-4f10-acf3-b0d07db78177" width="280" height="100">Cover 78%</canvas>
+                    </td>            
+                    <td>417</td>
+                    <td>            
+                       <a href="Modules/sudoku-o.html">C:\Users\ChenQiang\source\repos\sudoku-o\Debug\sudoku-o.exe</a> 
+                      
+                      
+                    </td>
+                </tr>        
+                
+            </tbody>
+            <tfoot>
+                <tr>
+                <td colspan="2" class="rounded-foot-left"></td>
+                <td class="rounded-foot-right"></td>
+                </tr>
+            </tfoot>            
+        </table>
+    </body>
+</html>

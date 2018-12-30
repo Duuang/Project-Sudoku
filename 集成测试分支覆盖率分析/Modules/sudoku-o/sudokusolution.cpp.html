@@ -1,0 +1,329 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>sudokusolution.cpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+	<body onload="prettyPrint()">
+        <h4></h4>
+		<pre class="prettyprint lang-cpp linenums">
+#include "pch.h"
+#include "SudokuSolution.h"
+#include &lt;string&gt;
+#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+
+#define TOP_LEFT_CORNER_NUMBER 2
+
+using namespace std;
+
+//
+//ÓÃConsoleParameterÀàµÄparameterÀ´³õÊ¼»¯¶ÔÏó
+//
+<span style = "background-color:#dfd">SudokuSolution::SudokuSolution(ConsoleParameter parameter) {
+  this-&gt;parameter = parameter;
+}</span>
+
+//
+//Éú³Éparameter²ÎÊýÖÐÊýÁ¿µÄ¶ÔÏó£¬²¢´æÖÁÎÄ¼þ
+//
+<span style = "background-color:#dfd">void SudokuSolution::Generate() {  // TODO: ¶àÏß³ÌºÍ»º³åÇø£¿</span>
+/*int puzzle[10][10] = {
+    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+    {-1, 4, 5, 6, 7, 8, 9, 1, 2, 3},
+    {-1, 7, 8, 9, 1, 2, 3, 4, 5, 6},
+    {-1, 2, 3, 1, 5, 6, 4, 8, 9, 7},
+    {-1, 5, 6, 4, 8, 9, 7, 2, 3, 1},
+    {-1, 8, 9, 7, 2, 3, 1, 5, 6, 4},
+    {-1, 3, 1, 2, 6, 4, 5, 9, 7, 8},
+    {-1, 6, 4, 5, 9, 7, 8, 3, 1, 2},
+    {-1, 9, 7, 8, 3, 1, 2, 6, 4, 5} };
+  ;*/
+  //´´½¨25¸ö»ù´¡Êý¶À£¬´æÔÚÊý×éÀï
+<span style = "background-color:#dfd">  GenerateBasicPuzzle();</span>
+  //ÓÃC++µÄÎÄ¼þÁ÷µÄ»°£ºby fstream: (a bit slower than use C fread/fwrite)
+  //======================
+  //ofstream outfile;
+  //outfile.open("sudoku1.txt", ios::out | ios::trunc);
+  //==================================
+  FILE *fp;
+  errno_t err;
+<span style = "background-color:#dfd">  err = fopen_s(&amp;fp, "sudoku.txt", "w+");  //´ò¿ªÎÄ¼þ£¬²»ÓÃerrµÄ»°´úÂë·ÖÎö»áwarning
+  int count = 0;  //Éú³ÉµÄ¸öÊý
+  int amount = parameter.GetOperationcode_c();
+  int maxcount = amount;</span>
+  int n1, n2, n3, n4, n5, n6, n7, n8, n9;  //´ú±í1~9µÄÐòÁÐ£¬ÔÚ»ù´¡Êý¶ÀÉÏ£¬Ó¦ÓÃÕâ¸öÐòÁÐ£¬¼´¿ÉÉú³ÉÒ»¸öÊý¶À
+  int sequence[10];  //´æ´¢1~9ÐòÁÐ
+<span style = "background-color:#dfd">  char outputstring[1005] = "";  //ÎÄ¼þ»º³åÇø£¨²»ÐèÒª³õÊ¼»¯£©</span>
+  //ÓÅ»¯°æ±¾1£º ÓÃÖ¸Õë²Ù×÷£¬´úÌæstrcat£¬ÒòÎªstrcatÃ¿´Î¶¼ÊÇ´Ó×Ö·û´®¿ªÊ¼´¦Íùºó£¬ÀË·ÑÊ±¼ä
+  char *currentpos;
+
+<span style = "background-color:#dfd">  for (int i = 0; i &lt; 25; i++) {  
+    n1 = TOP_LEFT_CORNER_NUMBER;</span>
+    int puzzle[10][10];            
+<span style = "background-color:#dfd">    for (n2 = 1; n2 &lt;= 9; n2++) {  // ugly...but quicker(?) than recursive function
+      if (n2 == n1)  continue;     // probably there isn't much difference?
+      for (n3 = 1; n3 &lt;= 9; n3++) {// TODO: try recursive function
+        if (n3 == n1 || n3 == n2)  continue;
+        for (n4 = 1; n4 &lt;= 9; n4++) {
+          if (n4 == n1 || n4 == n2 || n4 == n3)  continue;
+          for (n5 = 1; n5 &lt;= 9; n5++) {
+            if (n5 == n1 || n5 == n2 || n5 == n3 || n5 == n4)  continue;
+            for (n6 = 1; n6 &lt;= 9; n6++) {
+              if (n6 == n1 || n6 == n2 || n6 == n3 || n6 == n4 || n6 == n5)  continue;
+              for (n7 = 1; n7 &lt;= 9; n7++) {
+                if (n7 == n1 || n7 == n2 || n7 == n3 || n7 == n4 || n7 == n5 || n7 == n6) continue;
+                for (n8 = 1; n8 &lt;= 9; n8++) {</span>
+                  if (n8 == n1 || n8 == n2 || n8 == n3 || n8 == n4 || n8 == n5
+<span style = "background-color:#dfd">                    || n8 == n6 || n8 == n7) {
+                    continue;</span>
+                  }
+<span style = "background-color:#dfd">                  n9 = 45 - (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8);  //´ËÊ±ÒÑ¾­Éú³ÉÁËÒÔ2¿ªÍ·µÄÐòÁÐ
+                  currentpos = outputstring;  //Ö¸Õë£¬¼ÇÂ¼»º³åÇøµÄµ±Ç°µÄÎ»ÖÃ</span>
+
+<span style = "background-color:#dfd">                  sequence[1] = n1;   sequence[2] = n2;   sequence[3] = n3;  // store in sequence
+                  sequence[4] = n4;   sequence[5] = n5;   sequence[6] = n6;
+                  sequence[7] = n7;   sequence[8] = n8;   sequence[9] = n9;
+                  for (int row = 1; row &lt;= 9; row++) {  //substitute with numbers in sequence[]£¬½«Êý¶À¸ù¾ÝÐòÁÐÌæ»»
+                    for (int column = 1; column &lt;= 9; column++) {
+                      int basic_value = basic_puzzle[i][row][column];
+                      puzzle[row][column] = sequence[basic_value];
+                    }
+                  }</span>
+                  //ÓÅ»¯°æ±¾1£ºÒòÎªÊÇ»º³åÇø£¬²»³õÊ¼»¯Ò²Ã»ÊÂ£¬°Ñ³õÊ¼»¯×¢ÊÍµôÁË
+                  //outputstring[0] = '\0';  // init outputstring as empty string
+                  //memset(outputstring, '\0', sizeof(outputstring));
+				  //---------------------------------------------------------------------
+				  //¿ªÊ¼Ïò»º³åÇøÐ´ÒªÊäÈëµ½ÎÄ¼þµÄÊý¶ÀÊý¾Ý
+<span style = "background-color:#dfd">                  if (count != 0) {      // empty line before puzzle</span>
+                    //strcat_s(outputstring, sizeof(outputstring), "\n\n\0");
+<span style = "background-color:#dfd">                    *currentpos++ = '\n';
+                    *currentpos++ = '\n';</span>
+                  }
+<span style = "background-color:#dfd">                  for (int row = 1; row &lt;= 9; row++) {
+                    for (int column = 1; column &lt;= 9; column++) {
+                      if (column &lt;= 8) {    // Ç°8ÁÐ</span>
+                        /*char tmpchar[3];
+                        tmpchar[0] = puzzle[row][column] + 48;
+                        tmpchar[1] = ' ';
+                        tmpchar[2] = '\0';
+                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);*/
+<span style = "background-color:#dfd">                        *currentpos++ = puzzle[row][column] + 48;
+                        *currentpos++ = ' ';</span>
+                        
+<span style = "background-color:#dfd">                      } else if (row &lt;= 8) {   //µÚ9ÁÐÇ°8ÐÐ</span>
+                        /*char tmpchar[3];
+                        tmpchar[0] = puzzle[row][column] + 48;
+                        tmpchar[1] = '\n';
+                        tmpchar[2] = '\0';
+                        strcat_s(outputstring, sizeof(outputstring), tmpchar);*/
+<span style = "background-color:#dfd">                        *currentpos++ = puzzle[row][column] + 48;
+                        *currentpos++ = '\n';
+                      } else {    //ÓÒÏÂ½ÇµÄÊý</span>
+                        /*char tmpchar[2];
+                        tmpchar[0] = puzzle[row][column] + 48;
+                        tmpchar[1] = '\0';
+                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);*/
+<span style = "background-color:#dfd">                        *currentpos++ = puzzle[row][column] + 48;</span>
+                      }
+<span style = "background-color:#dfd">                    }
+                  }</span>
+                  //½«»º³åÇøÖÐµÄÕû¸öÊý¶ÀµÄ×Ö·û´®Ð´ÈëÎÄ¼þ
+<span style = "background-color:#dfd">                  *currentpos++ = '\0';
+                  fwrite(outputstring, sizeof(char) * (strlen(outputstring)), 1, fp);</span>
+                  //==================================
+                  //outfile &lt;&lt; outputstring;
+                  //==================================
+<span style = "background-color:#dfd">                  count++;
+                  if (count == maxcount) {
+                    return;</span>
+                  }
+<span style = "background-color:#dfd">                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }</span>
+<span style = "background-color:#fdd">  if (fp != NULL)
+    fclose(fp);</span>
+  //=======================
+  //outfile.close();
+  //========================
+<span style = "background-color:#dfd">}</span>
+
+//
+//Éú³Éparameter²ÎÊýÖÐÊýÁ¿µÄ¶ÔÏó£¬²¢´æÖÁÎÄ¼þ
+//ÖØÔØ£¬Éú³ÉÖ¸¶¨ÊýÁ¿µÄÊý¶À£¬²»ÊÜÏÞÓÚparameter
+//
+<span style = "background-color:#fdd">void SudokuSolution::Generate(int amount) {  </span>
+  //´´½¨25¸ö»ù´¡Êý¶À£¬´æÔÚÊý×éÀï
+<span style = "background-color:#fdd">  GenerateBasicPuzzle();</span>
+  //ÓÃC++µÄÎÄ¼þÁ÷µÄ»°£ºby fstream: (a bit slower than use C fread/fwrite)
+  //======================
+  //ofstream outfile;
+  //outfile.open("sudoku1.txt", ios::out | ios::trunc);
+  //==================================
+  FILE *fp;
+  errno_t err;
+<span style = "background-color:#fdd">  err = fopen_s(&amp;fp, "sudoku.txt", "w+");
+  int count = 0;</span>
+  //int amount = parameter.GetOperationcode_c();
+<span style = "background-color:#fdd">  int maxcount = amount;</span>
+  int n1, n2, n3, n4, n5, n6, n7, n8, n9;
+  int sequence[10];
+<span style = "background-color:#fdd">  char outputstring[1005] = "";</span>
+  //ÓÅ»¯°æ±¾1£º ÓÃÖ¸Õë²Ù×÷£¬´úÌæstrcat£¬ÒòÎªstrcatÃ¿´Î¶¼ÊÇ´Ó×Ö·û´®¿ªÊ¼´¦Íùºó£¬ÀË·ÑÊ±¼ä
+  char *currentpos;
+
+<span style = "background-color:#fdd">  for (int i = 0; i &lt; 25; i++) {
+    n1 = TOP_LEFT_CORNER_NUMBER;</span>
+    int puzzle[10][10];            
+<span style = "background-color:#fdd">    for (n2 = 1; n2 &lt;= 9; n2++) {  // ugly...but quicker(?) than recursive function
+      if (n2 == n1)  continue;     // probably there isn't much difference?
+      for (n3 = 1; n3 &lt;= 9; n3++) {// TODO: try recursive function
+        if (n3 == n1 || n3 == n2)  continue;
+        for (n4 = 1; n4 &lt;= 9; n4++) {
+          if (n4 == n1 || n4 == n2 || n4 == n3)  continue;
+          for (n5 = 1; n5 &lt;= 9; n5++) {
+            if (n5 == n1 || n5 == n2 || n5 == n3 || n5 == n4)  continue;
+            for (n6 = 1; n6 &lt;= 9; n6++) {
+              if (n6 == n1 || n6 == n2 || n6 == n3 || n6 == n4 || n6 == n5)  continue;
+              for (n7 = 1; n7 &lt;= 9; n7++) {
+                if (n7 == n1 || n7 == n2 || n7 == n3 || n7 == n4 || n7 == n5 || n7 == n6) continue;
+                for (n8 = 1; n8 &lt;= 9; n8++) {</span>
+                  if (n8 == n1 || n8 == n2 || n8 == n3 || n8 == n4 || n8 == n5
+<span style = "background-color:#fdd">                    || n8 == n6 || n8 == n7) {
+                    continue;</span>
+                  }
+<span style = "background-color:#fdd">                  n9 = 45 - (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8);
+                  currentpos = outputstring;</span>
+
+<span style = "background-color:#fdd">                  sequence[1] = n1;   sequence[2] = n2;   sequence[3] = n3;  // store in sequence
+                  sequence[4] = n4;   sequence[5] = n5;   sequence[6] = n6;
+                  sequence[7] = n7;   sequence[8] = n8;   sequence[9] = n9;
+                  for (int row = 1; row &lt;= 9; row++) {  //substitute with numbers in sequence[]
+                    for (int column = 1; column &lt;= 9; column++) {
+                      int basic_value = basic_puzzle[i][row][column];
+                      puzzle[row][column] = sequence[basic_value];
+                    }
+                  }</span>
+                  //ÓÅ»¯°æ±¾1£ºÒòÎªÊÇ»º³åÇø£¬²»³õÊ¼»¯Ò²Ã»ÊÂ£¬°Ñ³õÊ¼»¯×¢ÊÍµôÁË
+                  //outputstring[0] = '\0';  // init outputstring as empty string
+                  //memset(outputstring, '\0', sizeof(outputstring));
+<span style = "background-color:#fdd">                  if (count != 0) {      // empty line before puzzle</span>
+                    //strcat_s(outputstring, sizeof(outputstring), "\n\n\0");
+<span style = "background-color:#fdd">                    *currentpos++ = '\n';
+                    *currentpos++ = '\n';</span>
+                  }
+<span style = "background-color:#fdd">                  for (int row = 1; row &lt;= 9; row++) {
+                    for (int column = 1; column &lt;= 9; column++) {
+                      if (column &lt;= 8) {    // Ç°8ÁÐ</span>
+                        /*char tmpchar[3];
+                        tmpchar[0] = puzzle[row][column] + 48;
+                        tmpchar[1] = ' ';
+                        tmpchar[2] = '\0';
+                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);*/
+<span style = "background-color:#fdd">                        *currentpos++ = puzzle[row][column] + 48;
+                        *currentpos++ = ' ';</span>
+                        
+<span style = "background-color:#fdd">                      } else if (row &lt;= 8) {   //µÚ9ÁÐÇ°8ÐÐ</span>
+                        /*char tmpchar[3];
+                        tmpchar[0] = puzzle[row][column] + 48;
+                        tmpchar[1] = '\n';
+                        tmpchar[2] = '\0';
+                        strcat_s(outputstring, sizeof(outputstring), tmpchar);*/
+<span style = "background-color:#fdd">                        *currentpos++ = puzzle[row][column] + 48;
+                        *currentpos++ = '\n';
+                      } else {    //ÓÒÏÂ½ÇµÄÊý</span>
+                        /*char tmpchar[2];
+                        tmpchar[0] = puzzle[row][column] + 48;
+                        tmpchar[1] = '\0';
+                        strcat_s(outputstring, sizeof(outputstring) , tmpchar);*/
+<span style = "background-color:#fdd">                        *currentpos++ = puzzle[row][column] + 48;</span>
+                      }
+<span style = "background-color:#fdd">                    }
+                  }</span>
+                  //½«»º³åÇøÖÐµÄÕû¸öÊý¶ÀµÄ×Ö·û´®Ð´ÈëÎÄ¼þ
+<span style = "background-color:#fdd">                  *currentpos++ = '\0';
+                  fwrite(outputstring, sizeof(char) * (strlen(outputstring)), 1, fp);</span>
+                  //==================================
+                  //outfile &lt;&lt; outputstring;
+                  //==================================
+<span style = "background-color:#fdd">                  count++;
+                  if (count == maxcount) {
+                    return;</span>
+                  }
+<span style = "background-color:#fdd">                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  if (fp != NULL)
+    fclose(fp);</span>
+  //=======================
+  //outfile.close();
+  //========================
+<span style = "background-color:#fdd">}</span>
+
+//
+//Éú³É25¸ö»ù´¡Êý¶À£¨²»ÄÜÍ¨¹ý1µ½9µÄÅÅÁÐÊ¹Ö®ÏàÍ¬µÄ£¬Ëã²»Í¬µÄÊý¶À£©
+//±»Generate()µ÷ÓÃ
+//
+<span style = "background-color:#dfd">void SudokuSolution::GenerateBasicPuzzle() { </span>
+  /*int puzzle[25][10][10] = { {   // example puzzle
+    {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+    {-1, 1, 2, 3, 4, 5, 6, 7, 8, 9},
+    {-1, 4, 5, 6, 7, 8, 9, 1, 2, 3},
+    {-1, 7, 8, 9, 1, 2, 3, 4, 5, 6},
+    {-1, 2, 3, 1, 5, 6, 4, 8, 9, 7},
+    {-1, 5, 6, 4, 8, 9, 7, 2, 3, 1},
+    {-1, 8, 9, 7, 2, 3, 1, 5, 6, 4},
+    {-1, 3, 1, 2, 6, 4, 5, 9, 7, 8},
+    {-1, 6, 4, 5, 9, 7, 8, 3, 1, 2},
+    {-1, 9, 7, 8, 3, 1, 2, 6, 4, 5} } };*/
+  //ÓÃÀ´±£´æ456¡¢789µÄÅÅÁÐ×éºÏË³Ðò
+<span style = "background-color:#dfd">  int sequence456[6][3] = { {4, 5, 6}, {4, 6, 5}, {5, 4, 6}, {5, 6, 4}, {6, 4, 5} };
+  int sequence789[6][3] = { {7, 8, 9}, {7, 9, 8}, {8, 7, 9}, {8, 9, 7}, {9, 7, 8} };
+  int sequence123[3] = { 1, 2, 3 };
+  for (int i = 0; i &lt; 5; i++) { // i: choose in sequence456£¬ÔÚ456µÄÅÅÁÐË³ÐòÖÐÑ¡Ò»¸ö
+    for (int j = 0; j &lt; 5; j++) {  //j: choose in sequence 567£¬ÔÚ789µÄÅÅÁÐË³ÐòÖÐÑ¡Ò»¸ö
+      int count = i * 5 + j;
+      for (int k = 1; k &lt;= 9; k++)  // fill first row with 123456789£¬½«µÚÒ»ÐÐÌîÎª123456789
+        basic_puzzle[count][1][k] = k;
+      for (int k = 0; k &lt; 3; k++) { // loop for sequence, fill 2~3rd rows£¬°´ÕÕÑ¡µÄÐòÁÐ£¬Ìî2¡ª3ÐÐ
+        basic_puzzle[count][2][1 + k] = basic_puzzle[count][3][7 + k] = sequence456[i][k];
+        basic_puzzle[count][3][1 + k] = basic_puzzle[count][2][4 + k] = sequence789[j][k];
+        basic_puzzle[count][3][4 + k] = basic_puzzle[count][2][7 + k] = sequence123[k];
+      }
+      for (int row = 4; row &lt;= 6; row++) {  // fill 4~6 rows, right shift 1£¬Ìî4~6ÐÐ£¬¼´ÎªÇ°3ÐÐÓÒÒÆ1
+        for (int column = 1; column &lt;= 9; column++) {
+          if (column % 3 != 0) {
+            basic_puzzle[count][row][column] = basic_puzzle[count][row - 3][column + 1];
+          } else if(column % 3 == 0 &amp;&amp; column &gt; 2){
+            basic_puzzle[count][row][column] = basic_puzzle[count][row - 3][column - 2];</span>
+          }
+<span style = "background-color:#dfd">        }
+      }
+      for (int row = 7; row &lt;= 9; row++) {  // fill 7~9 rows, right shift 1 £¬Ìî7~9ÐÐ£¬¼´ÎªÇ°3ÐÐÓÒÒÆ1
+        for (int column = 1; column &lt;= 9; column++) {
+          if (column % 3 != 0) {
+            basic_puzzle[count][row][column] = basic_puzzle[count][row - 3][column + 1];
+          } else if(column % 3 == 0 &amp;&amp; column &gt; 2) {
+            basic_puzzle[count][row][column] = basic_puzzle[count][row - 3][column - 2];</span>
+          }
+<span style = "background-color:#dfd">        }
+      }
+    }
+  }
+}</span>
+</pre>
+	</body>
+</html>

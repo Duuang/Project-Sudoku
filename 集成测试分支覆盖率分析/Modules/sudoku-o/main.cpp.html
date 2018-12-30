@@ -1,0 +1,58 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>main.cpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+	<body onload="prettyPrint()">
+        <h4></h4>
+		<pre class="prettyprint lang-cpp linenums">
+#include "pch.h"
+#include &lt;iostream&gt;
+#include &lt;time.h&gt;
+#include "ConsoleParameter.h"
+#include "SudokuSolution.h"
+#include "SudokuPuzzle.h"
+
+using namespace std;
+
+<span style = "background-color:#dfd">int main(int argc, char *argv[]) {
+  printf("\n");</span>
+  clock_t t1, t2;
+<span style = "background-color:#dfd">  t1 = clock();
+  ConsoleParameter parameter;  //»ñÈ¡¿ØÖÆÌ¨²ÎÊý
+  parameter.Init(argc, argv);</span>
+  //Èç¹û¿ØÖÆÌ¨ÊäÈëÊÇºÏ·¨µÄ-c£¬ÔòÉú³ÉÊý¶À
+<span style = "background-color:#dfd">  if (parameter.GetCommand() == 'c' &amp;&amp; parameter.GetOperationcode_c() != -1) {
+    SudokuSolution puzzle(parameter);
+    puzzle.Generate();
+    printf("³É¹¦Éú³ÉÊý¶À£¬ÔÚµ±Ç°Ä¿Â¼µÄ sudoku.txt ÖÐ\n");</span>
+  //Èç¹û¿ØÖÆÌ¨ÊäÈëÊÇºÏ·¨µÄ-s£¬ÔòÇó½âÊý¶À
+<span style = "background-color:#dfd">  } else if (parameter.GetCommand() == 's' &amp;&amp; parameter.GetOperationcode_s() != "") {
+    SudokuPuzzle problem(parameter);
+    int solved_count = problem.SolveAll();</span>
+    //ÎÄ¼þ´ò¿ªÃ»ÓÐ³ö´í
+<span style = "background-color:#dfd">    if (solved_count != -2) {  
+      printf("Êý¶ÀÒÑÈ«²¿½âÍê£¬ÓÐ½âµÄÊý¶ÀÒÑ¾­ÒÀ´ÎÐ´Èëµ±Ç°Ä¿Â¼µÄ solution_of_puzzles.txt ÖÐ\n");
+      printf("ÓÐ½âµÄÊý¶À¸öÊý£º%d\n", solved_count);
+      printf("ÎÞ½âµÄÊý¶À¸öÊý£º%d\n", problem.count - solved_count);</span>
+    //Èç¹ûÎÄ¼þ´ò¿ª³ö´í
+    } else {  
+      ;  //´íÎóÐÅÏ¢ÔÚSudokuPuzzleÀàµÄ¹¹Ôìº¯ÊýÖÐÒÑ¾­Êä³öµ½¿ØÖÆÌ¨
+    }
+  //·Ç·¨¿ØÖÆÌ¨ÊäÈë
+<span style = "background-color:#dfd">  } else {
+    printf("·Ç·¨µÄÊäÈë£¡\n");</span>
+  }
+<span style = "background-color:#dfd">  t2 = clock();
+  printf("-----------------------------------------------\n");
+  printf("time passed: ");
+  cout &lt;&lt; (double)(t2 - t1) / CLOCKS_PER_SEC &lt;&lt; " seconds\n";</span>
+  
+  //system("pause");
+<span style = "background-color:#dfd">  return 0;
+}</span></pre>
+	</body>
+</html>

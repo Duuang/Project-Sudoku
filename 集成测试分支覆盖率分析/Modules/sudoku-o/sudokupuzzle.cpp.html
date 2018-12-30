@@ -1,0 +1,243 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>sudokupuzzle.cpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+	<body onload="prettyPrint()">
+        <h4></h4>
+		<pre class="prettyprint lang-cpp linenums">
+#include "pch.h"
+#include "SudokuPuzzle.h"
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+using namespace std;
+
+//
+//ÓÃConsoleParameterÀàµÄ²ÎÊý³õÊ¼»¯¶ÔÏó£¨ÎÞÄ¬ÈÏ¹¹Ôìº¯Êý£©£¬²¢³õÊ¼»¯ËùÓÐÊý¾Ý³ÉÔ±
+//
+<span style = "background-color:#dfd">SudokuPuzzle::SudokuPuzzle(ConsoleParameter parameter) {</span>
+  //³õÊ¼»¯Êý¾Ý³ÉÔ±
+<span style = "background-color:#dfd">  this-&gt;parameter = parameter;
+  memset(puzzle, -1, sizeof(puzzle));
+  islegal = false;
+  number_of_blanks = -1;
+  memset(position_of_blanks, -1, sizeof(position_of_blanks));
+  solvable = false;</span>
+  errno_t err;
+  //err = fopen_s(&amp;finput, "C:\\Users\\cky\\source\\repos\\Project9\\Project9\\problems.txt", "r");
+<span style = "background-color:#dfd">  err = fopen_s(&amp;finput, parameter.GetOperationcode_s().c_str(), "r");
+  if (finput == NULL)
+    printf("´ò¿ªÊý¶ÀÌâµÄÊäÈëÎÄ¼þÊ§°Ü\n");
+  err = fopen_s(&amp;foutput, "solution_of_puzzles.txt", "w");
+  if (foutput == NULL)</span>
+<span style = "background-color:#fdd">    printf("´ò¿ªÊý¶À½âµÄÊä³öÎÄ¼þÊ§°Ü\n");</span>
+<span style = "background-color:#dfd">  count = 0;
+}</span>
+
+//
+//ÓÃÓÚ¹Ø±ÕÁ½¸öÎÄ¼þ
+//
+<span style = "background-color:#dfd">SudokuPuzzle::~SudokuPuzzle() {
+  if (finput != NULL)
+    fclose(finput);  //ÓÉÓÚÓÃÁËerrno_t£¬ºÃÏñ²»ÓÃÅÐ¶ÏÊÇ·ñÎª¿ÕÖ¸ÕëÁË£¨ÖÁÉÙÃ»±¨warning..£©
+  if (foutput != NULL)
+    fclose(foutput);
+}</span>
+
+//
+//´ÓÎÄ¼þÖÐ¶ÁÈ¡ÏÂÒ»¸öÊý¶ÀÌâ£¬³É¹¦·µ»Ø0£¬Ê§°Ü-1
+//
+<span style = "background-color:#dfd">int SudokuPuzzle::GetNextPuzzle() {
+  if (finput == NULL || foutput == NULL)  //Èç¹û´ò¿ªÎÄ¼þÊ§°Ü£¬ÔòÎÞ·¨¼ÌÐø</span>
+<span style = "background-color:#fdd">    return -2;</span>
+  char tmpchar;  //°´×Ö·û¶ÁÈ¡ÎÄ¼þ£¬´æµ½tmpchar
+<span style = "background-color:#dfd">  int count_charsgot = 0;  //¼ÇÂ¼ÒÑ¶ÁÈ¡µÄ0~9µÄ×Ö·ûÊý
+  number_of_blanks = 0;  //¼ÇÂ¼Îª'0'µÄÊýÄ¿£¬³õÊ¼»¯
+  solvable = false;
+  islegal = false;
+  while (true) {
+    if (count_charsgot == 81) {  //Èç¹û¶ÁÈ¡ÍêÁË81¸ö0~9£¬ÔòÊý¶À¶ÁÈ¡Íê±Ï£¬º¯Êý·µ»Ø0£¬Õý³£½áÊø
+      islegal = true;
+      count++;
+      return 0;</span>
+    }
+<span style = "background-color:#dfd">    tmpchar = fgetc(finput);
+    if (feof(finput)) {  //¶ÁÈ¡µ½ÎÄ¼þ½áÊøµÄEOF£¬Ôò½áÊøº¯Êý£¬²¢ÇÒÃ»¶Áµ½81¸ö£¬ËµÃ÷´íÎó
+      islegal = false;
+      return -1;</span>
+    }
+    //Èç¹ûÎª0~9£¬Ôò½«81¸öÊý×Ö¸³ÖµÖÁpuzzle[10][10]
+<span style = "background-color:#dfd">    if (tmpchar &gt;= '0' &amp;&amp; tmpchar &lt;= '9') {
+      count_charsgot++;
+      int row = (count_charsgot - 1)/ 9 + 1;
+      int column = (count_charsgot - 1) % 9 + 1;
+      puzzle[row][column] = tmpchar - 48;
+      if (tmpchar == '0') {
+        position_of_blanks[number_of_blanks][0] = row;
+        position_of_blanks[number_of_blanks][1] = column;
+        number_of_blanks++;</span>
+      }
+    }
+<span style = "background-color:#dfd">  }</span>
+<span style = "background-color:#fdd">  count++;
+  islegal = true;
+  return 0;</span>
+<span style = "background-color:#dfd">}</span>
+
+//
+//·´¸´µ÷ÓÃGetNextPuzzle();¡¢SolveCurrentPuzzle();
+//½âÎÄ¼þÖÐµÄËùÓÐÊý¶ÀÌâ£¬²¢Êä³öµ½sudoku_answersÎÄ¼þ
+//
+<span style = "background-color:#dfd">int SudokuPuzzle::SolveAll() {
+  if (finput == NULL || foutput == NULL)  //Èç¹û´ò¿ªÎÄ¼þÊ§°Ü£¬ÔòÎÞ·¨¼ÌÐø
+    return -2;
+  int solved_count = 0;
+  while (true) {
+    if (GetNextPuzzle() != 0)
+      break;
+    if (SolveCurrentPuzzle() != 0) {
+      continue;   //ÎÞ½âµÄÇé¿ö</span>
+    }
+<span style = "background-color:#dfd">    solved_count++;  //ÓÐ½â£¬ÒÑ½âµÄÊýÄ¿¼Ó1
+  }
+  return solved_count;
+}</span>
+
+//
+//µ÷ÓÃdfs_solve()£¬½âµ±Ç°puzzleÖÐ´æ·ÅµÄÊý¶À
+//
+<span style = "background-color:#dfd">int SudokuPuzzle::SolveCurrentPuzzle() {
+  if (finput == NULL || foutput == NULL)  //Èç¹û´ò¿ªÎÄ¼þÊ§°Ü£¬ÔòÎÞ·¨¼ÌÐø</span>
+<span style = "background-color:#fdd">    return -2;</span>
+<span style = "background-color:#dfd">  if (!islegal) {</span>
+<span style = "background-color:#fdd">    return -1;
+  } else {</span>
+    //ÔÚ½âÊý¶ÀÇ°£¬»¹ÒªÏÈÅÐ¶Ï£¬ÒÑ¾­¸øµÄÊý¶ÀÌâÖÐÓÐÃ»ÓÐ±¾À´¾Í³åÍ»µÄµØ·½
+    //Èç¹ûÓÐµÄ»°£¬ÄÇ²»ÓÃ½âÁË£¬Ö±½ÓÊä³öÎÞ½â¼´¿É
+<span style = "background-color:#dfd">    for (int row = 1; row &lt;= 9; row++) {
+      for (int column = 1; column &lt;= 9; column++) {
+        if (puzzle[row][column] == 0)
+          continue;
+        for (int i = 1; i &lt;= 9; i++) {  //ÅÐ¶ÏÊÇ·ñºÍÐÐ»òÁÐÖØ¸´</span>
+          if ((i != row &amp;&amp; puzzle[i][column] == puzzle[row][column])
+<span style = "background-color:#dfd">            || (i != column &amp;&amp; puzzle[row][i] == puzzle[row][column])) {  //ÖØ¸´ÁË
+            solvable = false;
+            return -1;</span>
+          }
+<span style = "background-color:#dfd">        }
+        for (int k1 = 0; k1 &lt; 3; k1++)
+          for (int k2 = 0; k2 &lt; 3; k2++) {  //ÅÐ¶ÏÊÇ·ñºÍ9¹¬¸ñÖÐµÄÖØ¸´
+            int baserow = (row - 1) / 3 * 3 + 1;
+            int basecolumn = (column - 1) / 3 * 3 + 1;</span>
+            if (puzzle[baserow + k1][basecolumn + k2] == puzzle[row][column]
+<span style = "background-color:#dfd">              &amp;&amp; (baserow + k1 != row &amp;&amp; basecolumn + k2 != column)) {</span>
+<span style = "background-color:#fdd">              solvable = false;
+              return -1;</span>
+            }
+<span style = "background-color:#dfd">          }
+      }
+    }</span>
+    //ÏÖÔÚÊý¶ÀÒ»¶¨ÓÐ½âÁË¡£¡£
+	//µ÷ÓÃdfs£¬½âÊý¶À
+<span style = "background-color:#dfd">    dfs_solve(1);</span>
+	//Ö±½Ó½«puzzleÖÐµÄ0Ìæ»»ÎªsolutionÊý×éÖÐµÄ½â£¬È»ºóÊä³öµ½ÎÄ¼þ¼´¿É£¨ÆäÊµºÍÉú³ÉÊý¶ÀµÄÊä³ö²¿·ÖÒ»Ñù£©
+<span style = "background-color:#dfd">    if (solvable) {  
+      char outputstring[1005] = { '\0' };  //»º³åÇø
+      if (count &gt;= 2)
+        strcat_s(outputstring, sizeof(outputstring), "\n\n\0");  //Èô²»ÊÇµÚÒ»¸ö£¬ÔòÏÈÊä³ö¿ÕÐÐ
+      int solution_count = 0;
+      for (int row = 1; row &lt;= 9; row++)
+        for (int column = 1; column &lt;= 9; column++) {</span>
+          //Ç°8ÁÐ
+<span style = "background-color:#dfd">          if (column &lt;= 8) {  </span>
+            char tmpchar[3];
+<span style = "background-color:#dfd">            if (puzzle[row][column] != 0) {  //²»Îª0£¬Ö±½ÓÊä³ö
+              tmpchar[0] = puzzle[row][column] + 48;</span>
+            }
+<span style = "background-color:#dfd">            else {  //Îª0£¬Ìæ»»³ÉsolutionÊý×éÖÐµÄ½â
+              tmpchar[0] = solution[solution_count] + 48;
+              solution_count++;</span>
+            }
+<span style = "background-color:#dfd">            tmpchar[1] = ' ';
+            tmpchar[2] = '\0';
+            strcat_s(outputstring, sizeof(outputstring), tmpchar);  //¼ÓÈëµ½»º³åÇø</span>
+            //µÚ9ÁÐ£¬Ç°8ÐÐ
+<span style = "background-color:#dfd">          } else if (row &lt;= 8) {  </span>
+            char tmpchar[3];
+<span style = "background-color:#dfd">            if (puzzle[row][column] != 0) {
+              tmpchar[0] = puzzle[row][column] + 48;</span>
+            }
+<span style = "background-color:#dfd">            else {
+              tmpchar[0] = solution[solution_count] + 48;
+              solution_count++;</span>
+            }
+<span style = "background-color:#dfd">            tmpchar[1] = '\n';
+            tmpchar[2] = '\0';
+            strcat_s(outputstring, sizeof(outputstring), tmpchar);</span>
+            //ÓÒÏÂ½Ç
+<span style = "background-color:#dfd">          } else {</span>
+            char tmpchar[2];
+<span style = "background-color:#dfd">            if (puzzle[row][column] != 0) {
+              tmpchar[0] = puzzle[row][column] + 48;</span>
+            }
+<span style = "background-color:#dfd">            else {
+              tmpchar[0] = solution[solution_count] + 48;
+              solution_count++;</span>
+            }
+<span style = "background-color:#dfd">            tmpchar[1] = '\0';
+            strcat_s(outputstring, sizeof(outputstring), tmpchar);</span>
+          }
+<span style = "background-color:#dfd">        }</span>
+      //´Ó»º³åÇøÊä³öµ½ÎÄ¼þ
+<span style = "background-color:#dfd">      fwrite(outputstring, sizeof(char) * (strlen(outputstring)), 1, foutput);
+      return 0;</span>
+<span style = "background-color:#fdd">    } else {
+      return -1;</span>
+    }
+  }
+<span style = "background-color:#dfd">}</span>
+
+//
+//ÓÃÓÚ¸ù¾Ýpuzzle[10][10]½âÒ»¸öÊý¶À£¬°Ñ½â´æÖÁsolution[90]
+//ÓÃµÄÊÇ»ØËÝ·¨£¬Ã¶¾Ù
+//TODO: ¼Ó¼ôÖ¦Ìõ¼þ¡¢Æô·¢Ê½º¯Êý£¬ÌáÉýËÙ¶È
+//
+<span style = "background-color:#dfd">void SudokuPuzzle::dfs_solve(int depth) {
+  if (solvable)</span>
+<span style = "background-color:#fdd">    return;</span>
+<span style = "background-color:#dfd">  if (depth &gt; number_of_blanks) {  //ÖÕÖ¹Ìõ¼þ£¬Èç¹ûÉî¶È´óÓÚÁË¿Õ°×µÄ¸öÊý£¬Îª¿ÉÐÐ½â£¬ÖÃsolvableÎªtrue
+    solvable = true;
+    return;</span>
+<span style = "background-color:#fdd">  } else {</span>
+<span style = "background-color:#dfd">    for (int i = 1; i &lt;= 9; i++) {  //±éÀú1~9µÄ½Úµã
+      for (int j = 1; j &lt;= 9; j++) {  //Èç¹ûºÍÐÐ»òÁÐÖØ¸´</span>
+        if ((j != position_of_blanks[depth - 1][0]) &amp;&amp; (puzzle[j][position_of_blanks[depth - 1][1]] == i)
+<span style = "background-color:#dfd">          || (j != position_of_blanks[depth - 1][1]) &amp;&amp; (puzzle[position_of_blanks[depth - 1][0]][j] == i)) {
+          goto continue_next_branch;  //do nothing and stop searching this branch</span>
+        }
+<span style = "background-color:#dfd">      }
+      for (int k1 = 0; k1 &lt; 3; k1++)
+        for (int k2 = 0; k2 &lt; 3; k2++) {  //Èç¹ûºÍ9¹¬¸ñÖÐµÄÖØ¸´
+          int baserow = (position_of_blanks[depth - 1][0] - 1) / 3 * 3 + 1;
+          int basecolumn = (position_of_blanks[depth - 1][1] - 1) / 3 * 3 + 1;</span>
+          if (puzzle[baserow + k1][basecolumn + k2] == i &amp;&amp; baserow + k1 != position_of_blanks[depth - 1][0] 
+<span style = "background-color:#dfd">            &amp;&amp; basecolumn + k2 != position_of_blanks[depth - 1][1])
+            goto continue_next_branch;  //do nothing and stop searching this branch£¬Ìø×ªµ½Ñ­»·½áÊø´¦
+        }
+      solution[depth - 1] = i;  //¼ÇÂ¼µ±Ç°½Úµã½â
+      puzzle[position_of_blanks[depth - 1][0]][position_of_blanks[depth - 1][1]] = i;
+      dfs_solve(depth + 1);   //µÝ¹é»ØËÝ</span>
+      //solution[depth - 1] = 0;
+<span style = "background-color:#dfd">      puzzle[position_of_blanks[depth - 1][0]][position_of_blanks[depth - 1][1]] = 0;
+      if (solvable)  // !! Ö®Ç°µ÷ÊÔÁË°ëÌì¡£¡£Ô­À´ÊÇÕâÃ»Ìø³ö¡£¡£¶¼½âÍêÁËÒ»¸ö½âÁË»¹½Ó×ÅÑ­»·ÄØ¡£¡£
+        break;</span>
+      continue_next_branch:  ;  //do nothing and stop searching this branch
+<span style = "background-color:#dfd">    }</span>
+  }
+<span style = "background-color:#dfd">}</span></pre>
+	</body>
+</html>

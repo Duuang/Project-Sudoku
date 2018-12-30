@@ -1,0 +1,135 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>consoleparameter.cpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+	<body onload="prettyPrint()">
+        <h4></h4>
+		<pre class="prettyprint lang-cpp linenums">
+#include "pch.h"
+#include "ConsoleParameter.h"
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;stdlib.h&gt;
+
+using namespace std;
+
+//
+// ¸ù¾ÝargcºÍargv£¬³õÊ¼»¯ËùÓÐ³ÉÔ±±äÁ¿£¨³õÊ¼»¯Îª¿Õ£©
+//parameters:
+//int argc: argc from main()
+//char ** argv: argv from main()
+//
+<span style = "background-color:#dfd">void ConsoleParameter::Init(int argc, char *argv[]) {</span>
+  //³õÊ¼»¯³ÉÔ±±äÁ¿
+<span style = "background-color:#dfd">  islegal = true;
+  this-&gt;argc = argc;
+  this-&gt;argv = argv;
+  command = '\0';
+  operationcode_c = -1;
+  string emptystring = "\0";
+  operationcode_s = emptystring;
+  if (argc != 3) {  // Èç¹ûargc²»¶Ô£¬islegal²ÎÊýÖ±½ÓÉèÖÃ³É·Ç·¨£¬·µ»Ø-1
+    islegal = false;
+    return;</span>
+  }
+<span style = "background-color:#dfd">  if (ExtractCommand() != 0) {  //µ÷ÓÃExtractCommand()»ñÈ¡-c/-s
+    islegal = false;
+    return;</span>
+  }
+<span style = "background-color:#dfd">  if (ExtractOperationCode() != 0)  //µ÷ÓÃExtractOperationCode()
+    islegal = false;
+}</span>
+
+//
+// »ñÈ¡-c»òÕß-sÖ¸Áî£¬Ê§°Ü·µ»Ø'\0'
+//
+<span style = "background-color:#dfd">char ConsoleParameter::GetCommand() {
+  if (islegal)
+    return command;
+  return '\0';
+}</span>
+//
+// »ñÈ¡-cºóÃæµÄ²ÎÊý£¬Ê§°Ü·µ»Ø-1
+//
+<span style = "background-color:#dfd">int ConsoleParameter::GetOperationcode_c() {
+  if (islegal)
+    return operationcode_c;</span>
+<span style = "background-color:#fdd">  return -1;</span>
+<span style = "background-color:#dfd">}</span>
+//
+// »ñÈ¡-sºóÃæµÄ²ÎÊý£¬Ê§°Ü·µ»Ø¿Õstring¶ÔÏó
+//
+<span style = "background-color:#dfd">string ConsoleParameter::GetOperationcode_s() {
+  if (islegal)
+    return operationcode_s;</span>
+<span style = "background-color:#fdd">  string emptystring = "\0";
+  return emptystring;</span>
+<span style = "background-color:#dfd">}</span>
+
+//
+//´Ó¿ØÖÆÌ¨»ñÈ¡-c/-s£¬³É¹¦0£¬Ê§°Ü-1
+//
+<span style = "background-color:#dfd">int ConsoleParameter::ExtractCommand() {
+  if ( *(*(argv + 1)) == '-' &amp;&amp; *(*(argv + 1) + 2) == '\0' &amp;&amp;</span>
+    (*(*(argv + 1) + 1) == 'c' || *(*(argv + 1) + 1) == 's'))  {
+<span style = "background-color:#dfd">    command = *(*(argv + 1) + 1);
+    return 0;</span>
+
+<span style = "background-color:#fdd">  } else {</span>
+<span style = "background-color:#dfd">    OutputError("-c or -s required\n");
+    return -1;</span>
+  }
+<span style = "background-color:#dfd">}</span>
+
+//
+// ¸ù¾ÝcommandÎª'c'»¹ÊÇ's'£¬»ñÈ¡ºóÃæµÄ²ÎÊý£¬³É¹¦·µ»Ø0£¬Ê§°Ü-1
+//
+<span style = "background-color:#dfd">int ConsoleParameter::ExtractOperationCode() {
+  if (argc != 3) {  // acgc != 3, error</span>
+<span style = "background-color:#fdd">    OutputError("wrong parameter amount\n");
+    return -1;</span>
+  }
+  // -c 1-1000000
+<span style = "background-color:#dfd">  if (command == 'c') {
+    if (strlen(*(argv + 2)) &gt; 8) {  // ×Ö·û´®³¤¶ÈÏÞÖÆÎª8£¬³¬³öµÄ»°·Ç·¨
+      OutputError("1-1000000\n");
+      return -1;</span>
+
+<span style = "background-color:#fdd">    } else {</span>
+<span style = "background-color:#dfd">      for (int i = 0; i &lt; (int)strlen(*(argv + 2)); i++) {  // ¼ì²éÊÇ·ñËùÓÐ×Ö·û¶¼ÊÇ0~9
+        if (*(*(argv + 2) + i) &lt; '0' || *(*(argv + 2) + i) &gt; '9') {
+          OutputError("1-1000000\n");
+          return -1;</span>
+        }
+<span style = "background-color:#dfd">      }
+      sscanf_s(*(argv + 2), "%d", &amp;operationcode_c);
+      if (operationcode_c &gt;= 1 &amp;&amp; operationcode_c &lt;= 1000000) {  //¼ì²éÊÇ·ñÔÚ1¡ª¡ª1000000·¶Î§ÄÚ
+        return 0;</span>
+<span style = "background-color:#fdd">      } else {</span>
+<span style = "background-color:#dfd">        OutputError("1-1000000\n");
+        return -1;</span>
+      }
+    }
+  }
+  // -s, string filepath£¬´æÎÄ¼þÂ·¾¶µ½string
+<span style = "background-color:#dfd">  if (command == 's') {
+    char s_tmp[1005] = "";
+    sscanf_s(*(argv + 2), "%s", s_tmp, (unsigned int)(1005 * sizeof(char)));
+    operationcode_s = s_tmp;
+    return 0;</span>
+  }
+<span style = "background-color:#fdd">  return -1;</span>
+<span style = "background-color:#dfd">}</span>
+
+//
+// Êä³ö´íÎóµ½¿ØÖÆÌ¨ (don't use cout because of unit test)
+//
+<span style = "background-color:#dfd">void ConsoleParameter::OutputError(string errorstring) {</span>
+  //cout &lt;&lt; errorstring &lt;&lt; endl;
+<span style = "background-color:#dfd">}</span></pre>
+	</body>
+</html>
